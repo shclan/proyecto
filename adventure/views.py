@@ -65,3 +65,37 @@ class StartJourneyAPIView(generics.CreateAPIView):
 
     def get_repository(self) -> repositories.JourneyRepository:
         return repositories.JourneyRepository()
+
+
+class GetVehiclesAPIView(APIView):
+    def get(self, request) -> Response:
+        vehicles = models.Vehicle.objects.all()
+        vehiclesSerializer = serializers.VehicleSerializer(vehicles, many=True)
+        return Response(
+            vehiclesSerializer.data,
+            status=200
+        )
+
+class GetVehicleAPIView(APIView):
+    def get(self, request, license_plate) -> Response:
+        vehicles = models.Vehicle.objects.get(number_plate=license_plate)
+        vehiclesSerializer = serializers.VehicleSerializer(vehicles)
+        return Response(
+            vehiclesSerializer.data,
+            status=200
+        )
+
+class GetServiceAreaAPIView(APIView):
+    def get(self, request, kilometer) -> Response:
+        services = models.ServiceArea.objects.all()
+        servicesSerializer = serializers.ServiceAreaSerializer(services, many=True)
+        return Response(
+            servicesSerializer.data, status=200
+        )
+class GetServiceAreaByKilometerAPIView(APIView):
+    def get_by_kilometer(self, request, kilometer) -> Response:
+        services = models.ServiceArea.objects.get( kilometer=kilometer)
+        servicesSerializer = serializers.ServiceAreaSerializer(services, many=True)
+        return Response(
+            servicesSerializer, status=200
+        )
