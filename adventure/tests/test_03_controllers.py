@@ -58,23 +58,51 @@ class TestCreateServiceAreaAPIView:
         response = client.post("/api/adventure/create-service-area/", payload)  
         assert response.status_code == 201
 
-@pytest.mark.skip  # Remove
+
 class TestGetVehicleAPIView:
     def test_get(self, client, mocker):
         # TODO: Implement endpoint to get full list of vehicles
-        pass
+        list_vehicles = models.Vehicle.objects.all()
+        mocker.patch.object(
+            models.Vehicle.objects, "get", return_value=list_vehicles
+        )
+        response = client.get("/api/adventure/vehicles/")
+        print(response)
+        assert response.status_code == 200
+        assert len(list_vehicles) == len(json.loads(response.content))
+        
+
     def test_get_by_license_plate(self, client, mocker):
         # TODO: Implement endpoint to get vehicle data by license plate
-        pass
+        number_plate = 'AA-12-34'
+        vehicle = models.Vehicle.objects.get(number_plate=number_plate)
+        mocker.patch.object(
+            models.Vehicle.objects, "get", return_value=vehicle
+        )
+        response = client.get(f"/api/adventure/vehicle/{number_plate}")
+        assert response.status_code == 200
+        assert len(vehicle) == len(json.loads(response.content))
+       
 
-@pytest.mark.skip  # Remove
+
 class TestGetServiceAreaAPIView:
     def test_get(self, client, mocker):
         # TODO: Implement endpoint to get full list of service areas
-        pass
+        mocker.patch.object(models.ServiceArea.objects, "get")
+        response = client.get("/api/adventure/service-area/")
+        print(response)
+        assert response.status_code == 200
+        
+
+
     def test_get_by_kilometer(self, client, mocker):
         # TODO: Implement endpoint to get service area by kilometer
-        pass
+        mocker.patch.object(models.ServiceArea.objects, "get")
+        response = client.get("/api/adventure/service-area-by-kilometer/")
+        print(response)
+        assert response.status_code == 200
+
+        
 
 class TestStartJourneyAPIView:
     def test_api(self, client, mocker):
